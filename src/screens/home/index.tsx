@@ -3,6 +3,7 @@ import { ColorSwatch, Group } from "@mantine/core";
 import axios from "axios";
 import { SWATCHES } from "@/constants";
 import { Button } from "@/components/ui/button";
+import Draggable from "react-draggable";
 
 interface Response {
   expr: string;
@@ -21,6 +22,9 @@ export default function Home() {
   const [color, setColor] = useState("rgb(255, 255, 255)");
   const [reset, setReset] = useState(false);
   const [dictOfVars, setDictOfVars] = useState({});
+  const [latexPosition, setLatexPosition] = useState({ x: 10, y: 200 });
+  const [latexExpression, setLatexExpression] = useState<Array<string>>([]);
+  const [result, setResult] = useState<GeneratedResult>();
 
   useEffect(() => {
     if (reset) {
@@ -28,6 +32,20 @@ export default function Home() {
       setReset(false);
     }
   }, [reset]);
+
+  useEffect(() => {
+    if (result) {
+      renderLatexToCanvas(result.expression, result.answer);
+    }
+  }, [result]);
+
+  useEffect(() => {
+    if (latexExpression.length > 0 && window.MathJax) {
+      setTimeout(() => {
+        window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
+      }, 0);
+    }
+  }, [latexExpression]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -41,6 +59,27 @@ export default function Home() {
         ctx.lineWidth = 3;
       }
     }
+
+    const script = document.createElement("script");
+    script.src =
+      "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML";
+    script.async = true;
+    document.head.appendChild(script);
+
+    script.onload = () => {
+      window.MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+        },
+      });
+    };
+
+    return () => {
+      document.head.removeChild(script);
+    };
   }, []);
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -52,6 +91,20 @@ export default function Home() {
         ctx.beginPath();
         ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
         setIsDrawing(true);
+      }
+    }
+  };
+
+  const renderLatexToCanvas = (expression: string, answer: string) => {
+    const latex = `\\(\\LARGE{${expression} = ${answer}}\\)`;
+    setLatexExpression([...latexExpression, latex]);
+
+    // Clear the main canvas
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     }
   };
@@ -100,6 +153,46 @@ export default function Home() {
 
       const resp = await response.data;
       console.log("Response", resp);
+      resp.data.forEach((data: Response) => {
+        if (data.assign === true) {
+          // dict_of_vars[resp.result] = resp.answer;
+          setDictOfVars({
+            ...dictOfVars,
+            [data.expr]: data.result,
+          });
+        }
+      });
+      const ctx = canvas.getContext("2d");
+      const imageData = ctx!.getImageData(0, 0, canvas.width, canvas.height);
+      let minX = canvas.width,
+        minY = canvas.height,
+        maxX = 0,
+        maxY = 0;
+
+      for (let y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < canvas.width; x++) {
+          const i = (y * canvas.width + x) * 4;
+          if (imageData.data[i + 3] > 0) {
+            // If pixel is not transparent
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x);
+            maxY = Math.max(maxY, y);
+          }
+        }
+      }
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+
+      setLatexPosition({ x: centerX, y: centerY });
+      resp.data.forEach((data: Response) => {
+        setTimeout(() => {
+          setResult({
+            expression: data.expr,
+            answer: data.result,
+          });
+        }, 1000);
+      });
     }
   };
 
@@ -142,6 +235,19 @@ export default function Home() {
         onMouseUp={stopDrawing}
         onMouseOut={stopDrawing}
       />
+
+      {latexExpression &&
+        latexExpression.map((latex, index) => (
+          <Draggable
+            key={index}
+            defaultPosition={latexPosition}
+            onStop={(e, data) => setLatexPosition({ x: data.x, y: data.y })}
+          >
+            <div className="absolute p-2 text-white rounded shadow-md">
+              <div className="latex-content">{latex}</div>
+            </div>
+          </Draggable>
+        ))}
     </>
   );
 }
