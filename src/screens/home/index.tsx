@@ -27,6 +27,14 @@ export default function Home() {
   const [result, setResult] = useState<GeneratedResult>();
 
   useEffect(() => {
+    if (window.MathJax) {
+      window.MathJax.typeset(); // Trigger MathJax rendering
+    } else {
+      console.error('MathJax not loaded');
+    }
+  }, []);
+  
+  useEffect(() => {
     if (reset) {
       resetCanvas();
       setReset(false);
