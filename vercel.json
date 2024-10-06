@@ -4,6 +4,6 @@
         {"src": "backend-cal/main.py", "use": "@vercel/python"}
     ],
     "routes": [
-        {"src": "/(.*)", "dest": "backend-cal/main.py"}
+        {"src": "/api/(.*)", "dest": "backend-cal/main.py"}
     ]
 }
