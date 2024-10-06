@@ -10,9 +10,9 @@ bin/
 include/
 
 # Python virtual environment files
+.env
 *.pyenv
 *.venv
-*.env
 *.virtualenv
 
 # VSCode settings (if using VSCode)

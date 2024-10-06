@@ -4,7 +4,6 @@
         {"src": "backend-cal/main.py", "use": "@vercel/python"}
     ],
     "routes": [
-        {"src": "/api/(.*)", "dest": "backend-cal/main.py"}
-    ],
-    "excludeFiles": ["*.log", "*.test.py", "__pycache__/","venv"]
+        {"src": "/(.*)", "dest": "backend-cal/main.py"}
+    ]
 }
