@@ -2,6 +2,13 @@
     "version": 2,
     "builds": [
         {
+            "src": "package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "dist"
+            }
+        },
+        {
             "src": "backend-cal/main.py",
             "use": "@vercel/python"
         }
@@ -10,6 +17,10 @@
         {
             "source": "/calculate",
             "destination": "backend-cal/main.py"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ]
 }
