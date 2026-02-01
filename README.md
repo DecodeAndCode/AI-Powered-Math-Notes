@@ -2,12 +2,12 @@
 
 A powerful, Apple Notes-inspired application that allows you to draw mathematical equations on a digital canvas and get instant solutions using the power of Google's Gemini AI.
 
-![Math Notes Demo](./demo.png)
+<img width="1470" height="956" alt="Screenshot 2026-01-31 at 11 03 29 PM" src="https://github.com/user-attachments/assets/ceff17c6-ebd3-4c6f-97a7-a231e1ee97d6" />
 
 ## 🌟 Features
 
 - **Infinite Canvas**: Draw freely on a responsive, black canvas.
-- **AI-Powered Solutions**: Recognized handwriting and solves math problems instantly using Gemini 2.0 Flash.
+- **AI-Powered Solutions**: Recognized handwriting and solves math problems instantly using Gemini 3.0.
 - **Responsive Design**:
     - **Desktop**: Full toolbar with inline color/size controls.
     - **iPad/Tablet**: Adaptive layout with bottom toolbar and palette menu for mobile-friendly usage.
@@ -18,7 +18,7 @@ A powerful, Apple Notes-inspired application that allows you to draw mathematica
 ## 🛠️ Tech Stack
 
 - **Frontend**: React, Vite, Tailwind CSS, TypeScript, Mantine UI
-- **Backend**: Python, FastAPI, Google GenAI SDK (Gemini 2.0 Flash)
+- **Backend**: Python, FastAPI, Google GenAI SDK (Gemini 3.0)
 - **Tools**: Lucide React (Icons), Axios, Pillow (Image Processing)
 
 ## 🚀 Getting Started
