@@ -99,6 +99,42 @@ npm run dev
 4.  **Solve**: Click the **Run (Play)** button. The AI will analyze your drawing and overlay the answer in LaTeX format.
 5.  **Reset**: Click the **Reset** button to clear the canvas.
 
+## ☁️ Deployment (Vercel)
+This project is configured for seamless deployment on Vercel, hosting both the React Frontend and Python FastAPI Backend in a single repository.
+
+### 1. Configuration Overview
+- **`frontend-cal` as Root**: The Vercel project Root Directory must be set to `frontend-cal`.
+- **`vercel.json`**: Located in `frontend-cal/vercel.json`, this file handles:
+  - **Rewrites**: Directs `/calculate` API requests to the Python backend.
+  - **Builds**: Configures `@vercel/static-build` for Vite and `@vercel/python` for FastAPI.
+- **Serverless Backend**: The Python backend runs as a Serverless Function, meaning no separate server is required!
+
+### 2. Steps to Deploy
+1.  **Push to GitHub**: Ensure your latest code is on the default branch.
+2.  **Import to Vercel**: Select the repository.
+3.  **Project Settings**:
+    - **Root Directory**: `frontend-cal`
+    - **Environment Variables**: Add `GEMINI_API_KEY` with your Google Cloud API Key.
+4.  **Deploy**: Click deploy!
+
+### 🔧 Troubleshooting & Lessons Learned
+During development, we encountered and resolved several critical issues:
+
+- **Root Directory Mismatch**: Vercel initially failed to build because it looked for the app in the repo root.
+  - *Fix*: Set `frontend-cal` as the Root Directory in Vercel settings.
+- **Backend 404 / Missing Build**: The backend was building but the frontend wasn't (or vice versa).
+  - *Fix*: Updated `vercel.json` to explicitly include **both** builds:
+    ```json
+    "builds": [
+      { "src": "package.json", "use": "@vercel/static-build", ... },
+      { "src": "backend-cal/main.py", "use": "@vercel/python" }
+    ]
+    ```
+- **ModuleNotFoundError (Python)**: The backend crashed on Vercel because it couldn't find local modules like `apps` or `constants`.
+  - *Fix*: Added `sys.path.append(...)` in `main.py` to ensure the runtime finds the correct folder.
+- **500 Server Error (Gemini API)**: The backend would crash if the AI model returned markdown or encountered an error.
+  - *Fix*: Implemented robust error handling and Regex-based JSON parsing in `utils.py` to safely extract answers.
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
