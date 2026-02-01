@@ -2,7 +2,7 @@
 
 A powerful, Apple Notes-inspired application that allows you to draw mathematical equations on a digital canvas and get instant solutions using the power of Google's Gemini AI.
 
-![Math Notes Demo](https://placehold.co/600x400/1a1a1a/ffffff?text=Math+Notes+Demo) *Add a screenshot/demo here*
+![Math Notes Demo](./demo.png)
 
 ## 🌟 Features
 
