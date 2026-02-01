@@ -1,9 +1,15 @@
 {
     "version": 2,
     "builds": [
-        {"src": "backend-cal/main.py", "use": "@vercel/python"}
+        {
+            "src": "backend-cal/main.py",
+            "use": "@vercel/python"
+        }
     ],
-    "routes": [
-        {"src": "/api/(.*)", "dest": "backend-cal/main.py"}
+    "rewrites": [
+        {
+            "source": "/calculate",
+            "destination": "backend-cal/main.py"
+        }
     ]
 }
