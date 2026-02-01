@@ -2,6 +2,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+import os
+import sys
+
+# Add the current directory to sys.path to ensure modules can be imported
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from constants import SERVER_URL, PORT, ENV
 from apps.aiCalc.route import router as calculator_router
 
